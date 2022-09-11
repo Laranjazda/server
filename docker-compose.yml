@@ -1,0 +1,29 @@
+version: "3.8"
+
+networks:
+  ms-network:
+    name: hsob-network
+    driver: bridge
+
+services:
+  eureka-server:
+    image: "image-docker"
+    ports:
+      - "2020:2020"
+    networks:
+      - hsob-network
+    environment:
+      eureka.instance.hostname: server
+      eureka.client.serviceUrl.defaultZone: http://eureka-server:2020/eureka
+
+  microservice2:
+    image: dineshdontha67/book-service:latest
+    ports:
+      - "8082:8080"
+    networks:
+      - hsob-network
+    depends_on:
+      - eureka-server
+    environment:
+      server.port: 8082
+      eureka.client.serviceUrl.defaultZone: http://eureka-server:8761/eureka 
